@@ -1,0 +1,62 @@
+Converting GML script: HanifFlatUI.gml
+Converted string - line 29: '|' -> "|"
+Converted string - line 39: '|' -> "|"
+Converted string - line 76: '|' -> "|"
+
+Converting GML script: HanifFlatUI.gml
+Converted string - line 20: '|' -> "|"
+
+Converting GML script: HanifFlatUI.gml
+Converted string - line 35: '|' -> "|"
+Converted string - line 36: "\#" -> "\\#"
+Converted string - line 37: "\#" -> "\\#"
+Converted string - line 71: "\#" -> "\\#"
+Converted string - line 71: "\#" -> "\\#"
+Converted string - line 95: '|' -> "|"
+Converted string - line 103: '|' -> "|"
+Converted string - line 105: '|' -> "|"
+Converted string - line 109: '|' -> "|"
+Converted string - line 258: '|' -> "|"
+Converted string - line 259: '|' -> "|"
+Converted string - line 260: '|' -> "|"
+Converted string - line 264: '|' -> "|"
+Converted string - line 279: '|' -> "|"
+Converted string - line 281: '|' -> "|"
+Converted string - line 286: '|' -> "|"
+Converted string - line 288: '|' -> "|"
+Converted string - line 295: "\#" -> "\\#"
+Converted string - line 296: "\#" -> "\\#"
+Converted string - line 301: "\#" -> "\\#"
+Converted string - line 301: "\#" -> "\\#"
+Converted string - line 301: '|' -> "|"
+Converted string - line 304: "\#" -> "\\#"
+Converted string - line 304: "\#" -> "\\#"
+Converted string - line 304: '|' -> "|"
+Converted string - line 309: '|' -> "|"
+Converted string - line 309: '|' -> "|"
+Converted string - line 313: '|' -> "|"
+Converted string - line 320: '|' -> "|"
+Converted string - line 326: "\#" -> "\\#"
+Converted string - line 329: '|' -> "|"
+Converted string - line 329: '|' -> "|"
+
+Converting GML script: HanifFlatUI.gml
+Converted string - line 35: '|' -> "|"
+Converted string - line 94: '|' -> "|"
+Converted string - line 95: '|' -> "|"
+Converted string - line 95: '|' -> "|"
+Converted string - line 194: '|' -> "|"
+Converted string - line 195: '|' -> "|"
+Converted string - line 195: '|' -> "|"
+
+Converting GML script: HanifFlatUI.gml
+Converted string - line 15: '|' -> "|"
+
+Converting GML script: HanifFlatUI.gml
+Converted string - line 40: '|' -> "|"
+
+Converting GML script: HanifFlatUI.gml
+Converted string - line 44: "\" -> "\\"
+Converted string - line 44: '"' -> "\""
+Converted string - line 354: "\#" -> "\\#"
+Converted string - line 355: "\#" -> "\\#"

@@ -1,0 +1,6 @@
+*.pyc
+
+Client/extensions/HanifFlatUI/*
+Client/extensions/WinDev/*
+
+
