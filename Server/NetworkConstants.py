@@ -18,7 +18,8 @@ send_codes = {
 	"MOVE":5,
 	"JOIN":6,
 	"LEAVE":7,
-	"CHAT":8,
+    "CHAT":8,
+    "CLOSE":9,
 }
 
 

@@ -202,15 +202,24 @@ class Client(threading.Thread):
             TODO: Pass actual server as reference so we can modify it
         """
         print("Disconnected from {0}:{1}".format(self.address[0], self.address[1]))
-        self.server.clients.remove(self)
         self.connected = False
-        if self.user!=None:
-            self.user.Running=False
-            #forward to other clients
-            self.clearbuffer()
-            self.writebyte(send_codes["LEAVE"])
-            self.writebyte(self.pid)
-            self.sendmessage_other()
+
+        if self in self.server.clients:
+            self.server.clients.remove(self)
+            if self.user!=None:
+                self.user.Running=False
+                #forward to other clients
+                self.clearbuffer()
+                self.writebyte(send_codes["LEAVE"])
+                self.writebyte(self.pid)
+                self.sendmessage_other()
+
+    def kick_user(self):
+        self.clearbuffer()
+        self.writebyte(send_codes["CLOSE"])
+        self.writestring("You have been kicked")
+        self.sendmessage()
+        self.disconnect_user()
 
 
     def clearbuffer(self):

@@ -37,6 +37,10 @@ switch( msg_id ) {
 		case_message_player_chat();
 	break;
 	
+	case RECIEVE_NETWORK_CLOSE:
+		case_message_close()
+	break;
+	
 	
 	default:
 		show_debug_message("Unkown packet of id: "+string(msg_id))

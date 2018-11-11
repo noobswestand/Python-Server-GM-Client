@@ -1,9 +1,9 @@
 import socket,sys,mysql.connector
 from enum import Enum
 from time import sleep
-
+from threading import Thread
 from Client import Client
-
+from NetworkConstants import receive_codes, send_codes
 
 
 
@@ -13,7 +13,7 @@ class Server:
 
         self.max_clients = max_clients
         self.clients = []
-        self.clientpid = 0
+        self.clientpid = 1 #0=server
         self.verified_clients = {}
         self.port = port
         self.socket = None
@@ -25,6 +25,37 @@ class Server:
           database="gm"
         )
         self.dbc = self.db.cursor()
+        self.input_thread=-1
+
+    def inputs(self):
+        while self.running:
+            x=input("Server>")
+            if "/help" in x:
+                print("/help\n\tShows this help menu\n\
+/kick <player>\n\tkicks a player of a given username\n\
+/say <text>\n\tsends a chat message to everyone")
+            if "/kick " in x:
+                player=x.replace("/kick ","")
+                found=False
+                for players in self.clients:
+                    if players.username==player:
+                        players.kick_user()
+                        found=True
+                        break
+                if found==False:
+                    print("Player not found")
+                else:
+                    print("Kicked player",player)
+            if "/say " in x:
+                text=x.replace("/say ","")
+                for players in self.clients:
+                    players.clearbuffer()
+                    players.writebyte(send_codes["CHAT"])
+                    players.writebyte(0)
+                    players.writestring(text)
+                    players.sendmessage()
+
+
 
 
     def start(self):
@@ -42,6 +73,9 @@ class Server:
             sys.exit()
 
         # Main server loop
+        self.input_thread = Thread(target = self.inputs)
+        self.input_thread.setDaemon(True)
+        self.input_thread.start()
         while self.running:
             sleep(1 / 1000)
 

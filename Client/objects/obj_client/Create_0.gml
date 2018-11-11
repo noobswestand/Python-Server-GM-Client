@@ -16,6 +16,8 @@
 #macro RECIEVE_NETWORK_PLAYER_JOIN 6
 #macro RECIEVE_NETWORK_PLAYER_LEAVE 7
 #macro RECIEVE_NETWORK_PLAYER_CHAT 8
+#macro RECIEVE_NETWORK_CLOSE 9
+
 
 
 //Packets send
@@ -69,7 +71,7 @@ packet_length_real=0;
 global.clients=ds_list_create();
 
 global.username="";
-global.pid=0;
+global.pid=-1;
 
 scr_chat_init();
 chatting=false
