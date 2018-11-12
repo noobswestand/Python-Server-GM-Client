@@ -136,7 +136,7 @@ class Client(threading.Thread):
                     self.writedouble(c.user.y)
                     self.writebit(False)
                     self.sendmessage(buff=self.buffer)
-    def case_message_register(self):
+    def case_message_player_register(self):
         username=self.readstring()
         password=self.readstring()
         self.server.dbc.execute("SELECT * FROM users WHERE username=%s;",(username,))
