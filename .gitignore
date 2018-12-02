@@ -1,5 +1,7 @@
 *.pyc
 
+Client.zip
+
 Client/extensions/HanifFlatUI/*
 Client/extensions/WinDev/*
 

@@ -8,6 +8,8 @@ if room==rm_menu{
 	if succ==true{
 		global.username=readstring();
 		global.pid=readbyte();
+		global.login_x=readdouble();
+		global.login_y=readdouble();
 		
 		room_goto_next();
 	}else{

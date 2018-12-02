@@ -1,4 +1,4 @@
-import socket,sys,mysql.connector
+import socket,sys,sqlite3
 from enum import Enum
 from time import sleep
 from threading import Thread
@@ -18,14 +18,29 @@ class Server:
         self.port = port
         self.socket = None
         self.running = False
-        self.db = mysql.connector.connect(
-          host="localhost",
-          user="root",
-          passwd="",
-          database="gm"
-        )
-        self.dbc = self.db.cursor()
+        
+        self.db = sqlite3.connect('ar.db',check_same_thread=False)
+        self.dbc= self.db.cursor()
+
         self.input_thread=-1
+    def __del__(self):
+        self.db.commit()
+        self.db.close()
+
+    def createDB(self):
+        sql="SELECT name FROM sqlite_master WHERE type='table' AND name='users';"
+        self.dbc.execute(sql)
+        if self.dbc.fetchone()==None:
+            sql="""CREATE TABLE IF NOT EXISTS 'users' (
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                username varchar(255) NOT NULL,
+                password varchar(255) NOT NULL,
+                x INTEGER NOT NULL DEFAULT 0,
+                y INTEGER NOT NULL DEFAULT 0,
+                ban BOOLEAN NOT NULL DEFAULT 0
+            )"""
+            dbc.execute(sql)
+
 
     def inputs(self):
         while self.running:
@@ -33,19 +48,16 @@ class Server:
             if "/help" in x:
                 print("/help\n\tShows this help menu\n\
 /kick <player>\n\tkicks a player of a given username\n\
-/say <text>\n\tsends a chat message to everyone")
+/say <text>\n\tsends a chat message to everyone\n\
+/ban <player>\n\tbans a player of a given username")
             if "/kick " in x:
-                player=x.replace("/kick ","")
-                found=False
-                for players in self.clients:
-                    if players.username==player:
-                        players.kick_user()
-                        found=True
-                        break
-                if found==False:
+                name=x.replace("/kick ","")
+                player=self.playerFind(name)
+                if player==None:
                     print("Player not found")
                 else:
-                    print("Kicked player",player)
+                    player.kick_user()
+                    print("Kicked player",name)
             if "/say " in x:
                 text=x.replace("/say ","")
                 for players in self.clients:
@@ -55,6 +67,11 @@ class Server:
                     players.writestring(text)
                     players.sendmessage()
 
+    def playerFind(self,name):
+        for player in self.clients:
+            if player.username==name:
+                return player
+        return None
 
 
 

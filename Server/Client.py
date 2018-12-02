@@ -17,6 +17,7 @@ class Client(threading.Thread):
         self.handshake = handshake_codes['UNKNOWN']         # Handshake status defaulted to unknown
         self.user = None                                    # Clients each have a user for the game
         self.pid = pid
+        self.id = -1
         self.username=""
         self.buffer=Network.Buff()
 
@@ -88,9 +89,9 @@ class Client(threading.Thread):
         login=True
         login_msg=""
         #check if correct username+password
-        self.server.dbc.execute("SELECT * FROM users WHERE username=%s AND password=%s;",(username,password))
-        result = self.server.dbc.fetchall()
-        if len(result)==0:
+        self.server.dbc.execute("SELECT * FROM users WHERE username=? AND password=?;",(username,password))
+        result = self.server.dbc.fetchone()
+        if result==None:
             login=False
             login_msg="Invalid username or password"
         #Check if they are already logged in
@@ -99,12 +100,20 @@ class Client(threading.Thread):
                 login=False
                 login_msg="You are already logged in!"
 
+        x=0
+        y=0
+
         self.clearbuffer()
         self.writebyte(send_codes["LOGIN"])
         self.writebit(login)
         if login==True:
             self.writestring(username)
             self.writebyte(self.pid)
+            self.id=result[0]
+            x=result[3]
+            y=result[4]
+            self.writedouble(x)
+            self.writedouble(y)
             print("{0} logged in from {1}:{2}".format(username, self.address[0], self.address[1]))
             self.username=username
         else:
@@ -112,7 +121,7 @@ class Client(threading.Thread):
         self.sendmessage()
 
         if login==1:
-            self.user=User.User(0,0,username,self)
+            self.user=User.User(x,y,username,self)
             self.user.start()
 
             #tell everyone you are here
@@ -120,8 +129,8 @@ class Client(threading.Thread):
             self.writebyte(send_codes["JOIN"])
             self.writebyte(self.pid)
             self.writestring(self.username)
-            self.writedouble(0)
-            self.writedouble(0)
+            self.writedouble(x)
+            self.writedouble(y)
             self.writebit(True)
             self.sendmessage_other()
             #time.sleep(1)
@@ -139,21 +148,21 @@ class Client(threading.Thread):
     def case_message_player_register(self):
         username=self.readstring()
         password=self.readstring()
-        self.server.dbc.execute("SELECT * FROM users WHERE username=%s;",(username,))
-        if len(self.server.dbc.fetchall())==0:
-            self.server.dbc.execute("INSERT INTO users(username,password) VALUES(%s,%s)",(username,password))
+        self.server.dbc.execute("SELECT * FROM users WHERE username=?;",(username,))
+        if self.server.dbc.fetchone()==None:
+            self.server.dbc.execute("INSERT INTO users(username,password) VALUES(?,?)",(username,password))
+            self.server.db.commit()
             self.clearbuffer()
             self.writebyte(send_codes["REGISTER"])
             self.writebit(True)
             self.writestring(username)
             self.sendmessage()
             print("{0} registered from {1}:{2}".format(username, self.address[0], self.address[1]))
-
         else:
-            clearbuffer()
-            writebyte(send_codes["REGISTER"])
-            writebit(False)
-            writestring("There is already an account by that name")
+            self.clearbuffer()
+            self.writebyte(send_codes["REGISTER"])
+            self.writebit(False)
+            self.writestring("There is already an account by that name")
             self.sendmessage()
     def case_message_player_move(self):
         self.user.inputs=[self.readbit(),self.readbit(),self.readbit(),self.readbit()]
@@ -199,9 +208,14 @@ class Client(threading.Thread):
     def disconnect_user(self):
         """
             Removes the user from the server after disconnection
-            TODO: Pass actual server as reference so we can modify it
         """
         print("Disconnected from {0}:{1}".format(self.address[0], self.address[1]))
+        
+        #save into db
+        self.server.dbc.execute("UPDATE users SET x=?, y=? WHERE id=?",
+            (self.user.x,self.user.y,self.id))
+        self.server.db.commit()
+
         self.connected = False
 
         if self in self.server.clients:

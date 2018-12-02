@@ -11,5 +11,7 @@ pleft=false
 pright=false
 
 username=global.username
+x=global.login_x
+y=global.login_y
 
 move_update=true
