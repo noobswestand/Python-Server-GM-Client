@@ -1,4 +1,4 @@
-///case_message_register()
+///@description case_message_register()
 //RECIEVE_NETWORK_REGISTER
 
 var action=readbit();

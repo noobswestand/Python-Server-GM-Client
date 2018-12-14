@@ -1,4 +1,4 @@
-///case_message_player_leave()
+///@description case_message_player_leave()
 //RECIEVE_NETWORK_PLAYER_LEAVE
 
 var pid=readbyte();

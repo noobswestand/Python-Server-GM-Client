@@ -212,9 +212,10 @@ class Client(threading.Thread):
         print("Disconnected from {0}:{1}".format(self.address[0], self.address[1]))
         
         #save into db
-        self.server.dbc.execute("UPDATE users SET x=?, y=? WHERE id=?",
-            (self.user.x,self.user.y,self.id))
-        self.server.db.commit()
+        if self.user!=None:
+            self.server.dbc.execute("UPDATE users SET x=?, y=? WHERE id=?",
+                (self.user.x,self.user.y,self.id))
+            self.server.db.commit()
 
         self.connected = False
 

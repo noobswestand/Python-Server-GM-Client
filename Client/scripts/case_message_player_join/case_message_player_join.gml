@@ -1,4 +1,4 @@
-///case_message_player_join()
+///@description case_message_player_join()
 //RECIEVE_NETWORK_PLAYER_JOIN
 
 var pid=readbyte();

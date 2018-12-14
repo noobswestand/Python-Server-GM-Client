@@ -1,4 +1,4 @@
-///case_message_player_move()
+///@description case_message_player_move()
 //RECIEVE_NETWORK_PLAYER_MOVE
 
 var pid=readbyte();

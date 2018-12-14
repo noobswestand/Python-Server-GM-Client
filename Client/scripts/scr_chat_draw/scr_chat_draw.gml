@@ -1,7 +1,7 @@
-///scr_chat_draw(x,y,lines)
-/*
-	Draws the chatbox
-*/
+///@description scr_chat_draw(x,y,lines) Draws the chatbox
+///@param x
+///@param y
+///@param lines
 
 var xx=argument[0],yy=argument[1],lines=argument[2];
 var hh=string_height("A");

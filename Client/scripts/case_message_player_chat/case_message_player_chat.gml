@@ -1,4 +1,5 @@
-
+///@description case_message_player_chat
+//RECIEVE_NETWORK_PLAYER_CHAT
 
 var pid=readbyte();
 var str=readstring();

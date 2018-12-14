@@ -1,4 +1,4 @@
-///case_message_login
+///@description case_message_login
 //NETWORK_LOGIN
 
 if room==rm_menu{

@@ -1,9 +1,8 @@
-///scr_find_player(pid,[self])
-/*
-	pid : pid of the player - assigned when they log in
-	[self] : if you want to include yourself in the results
-	returns the instances ID of a given pid of a player
-*/
+///@description scr_find_player(pid,[self])
+///@param pid	pid of the player - assigned when they log in
+///@param [self]		if you want to include yourself in the results
+///@return		instances ID of a given pid of a player
+
 var pid=argument[0];
 for(var i=0;i<ds_list_size(global.clients);i++){
 	var player=global.clients[|i];

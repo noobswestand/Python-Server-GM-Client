@@ -1,4 +1,5 @@
-///sendmessage([tcp])
+///@description sendmessage([tcp])
+///@param [tcp]
 var __a;
 
 if argument_count==1{ 
