@@ -27,6 +27,12 @@ class Buff():
 	def writefloat(self,b):
 		self.BufferWrite.append(b)
 		self.BufferWriteT.append("f")
+	def writeshort(self,b):
+		self.BufferWrite.append(b)
+		self.BufferWriteT.append("h")
+	def writeushort(self,b):
+		self.BufferWrite.append(b)
+		self.BufferWriteT.append("H")
 	def readstring(self):
 		s=""
 		p=""
@@ -43,6 +49,14 @@ class Buff():
 		Buffer2=self.Buffer
 		self.Buffer=self.Buffer[1:]
 		return struct.unpack('?', Buffer2[:1])[0]
+	def readshort(self):
+		Buffer2=self.Buffer
+		self.Buffer=self.Buffer[2:]
+		return struct.unpack('h', Buffer2[:2])[0]
+	def readushort(self):
+		Buffer2=self.Buffer
+		self.Buffer=self.Buffer[2:]
+		return struct.unpack('H', Buffer2[:2])[0]
 	def readint(self):
 		Buffer2=self.Buffer
 		self.Buffer=self.Buffer[4:]

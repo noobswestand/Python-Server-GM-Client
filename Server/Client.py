@@ -251,6 +251,10 @@ class Client(threading.Thread):
         self.buffer.writedouble(b)
     def writefloat(self,b):
         self.buffer.writefloat(b)
+    def writeshort(self,b):
+        self.buffer.writeshort(b)
+    def writeushort(self,b):
+        self.buffer.writeushort(b)
     def readstring(self):
         return self.buffer.readstring()
     def readbyte(self):
@@ -263,3 +267,7 @@ class Client(threading.Thread):
         return self.buffer.readdouble()
     def readfloat(self):
         return self.buffer.readfloat()
+    def readshort(self):
+        return self.buffer.readshort()
+    def readushort(self):
+        return self.buffer.readushort()

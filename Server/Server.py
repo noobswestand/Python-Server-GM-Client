@@ -19,7 +19,7 @@ class Server:
         self.socket = None
         self.running = False
         
-        self.db = sqlite3.connect('ar.db',check_same_thread=False)
+        self.db = sqlite3.connect('database.db',check_same_thread=False)
         self.dbc= self.db.cursor()
 
         self.input_thread=-1
