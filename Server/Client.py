@@ -1,9 +1,9 @@
-import struct,threading,socket,User
+import struct,threading,socket,bcrypt,time
 
 from NetworkConstants import receive_codes, send_codes, handshake_codes
 from Network import *
 import Network
-import time
+import User
 
 
 class Client(threading.Thread):
@@ -89,11 +89,15 @@ class Client(threading.Thread):
         login=True
         login_msg=""
         #check if correct username+password
-        self.server.dbc.execute("SELECT * FROM users WHERE username=? AND password=?;",(username,password))
-        result = self.server.dbc.fetchone()
+        result = self.server.sql("SELECT * FROM users WHERE username=?",(username,))
         if result==None:
             login=False
             login_msg="Invalid username or password"
+        if login==True:
+            pwd=result["password"]
+            if bcrypt.checkpw(password.encode('utf8'), pwd)==False:
+                login=False
+                login_msg="Invalid username or password"
         #Check if they are already logged in
         for c in self.server.clients:
             if c.user!=None and c.user.username==username:
@@ -109,9 +113,9 @@ class Client(threading.Thread):
         if login==True:
             self.writestring(username)
             self.writebyte(self.pid)
-            self.id=result[0]
-            x=result[3]
-            y=result[4]
+            self.id=result["id"]
+            x=result["x"]
+            y=result["y"]
             self.writedouble(x)
             self.writedouble(y)
             print("{0} logged in from {1}:{2}".format(username, self.address[0], self.address[1]))
@@ -148,10 +152,10 @@ class Client(threading.Thread):
     def case_message_player_register(self):
         username=self.readstring()
         password=self.readstring()
-        self.server.dbc.execute("SELECT * FROM users WHERE username=?;",(username,))
-        if self.server.dbc.fetchone()==None:
-            self.server.dbc.execute("INSERT INTO users(username,password) VALUES(?,?)",(username,password))
-            self.server.db.commit()
+        result=self.server.sql("SELECT * FROM users WHERE username=?;",(username,))
+        if result==None:
+            password=bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+            self.server.sql("INSERT INTO users(username,password) VALUES(?,?)",(username,password))
             self.clearbuffer()
             self.writebyte(send_codes["REGISTER"])
             self.writebit(True)

@@ -1,0 +1,6 @@
+/help
+	Shows this help menu
+/kick <player>
+	kicks a player of a given username
+/say <text>
+	sends a chat message to everyone

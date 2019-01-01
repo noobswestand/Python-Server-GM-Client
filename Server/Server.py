@@ -1,11 +1,15 @@
 import socket,sys,sqlite3
 from enum import Enum
 from time import sleep
-from threading import Thread
+from threading import Thread,Lock
 from Client import Client
 from NetworkConstants import receive_codes, send_codes
 
-
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 
 class Server:
@@ -20,36 +24,44 @@ class Server:
         self.running = False
         
         self.db = sqlite3.connect('database.db',check_same_thread=False)
+        self.db.row_factory = dict_factory
         self.dbc= self.db.cursor()
+        self.lock = Lock()
+
+        with open('help.txt', 'r') as myfile:
+            self.input_help=myfile.read()
 
         self.input_thread=-1
     def __del__(self):
         self.db.commit()
         self.db.close()
 
-    def createDB(self):
-        sql="SELECT name FROM sqlite_master WHERE type='table' AND name='users';"
-        self.dbc.execute(sql)
-        if self.dbc.fetchone()==None:
-            sql="""CREATE TABLE IF NOT EXISTS 'users' (
-                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                username varchar(255) NOT NULL,
-                password varchar(255) NOT NULL,
-                x INTEGER NOT NULL DEFAULT 0,
-                y INTEGER NOT NULL DEFAULT 0,
-                ban BOOLEAN NOT NULL DEFAULT 0
-            )"""
-            dbc.execute(sql)
+    def sql(self,sql,args=()):
+        try:
+            self.lock.acquire(True)
 
+            if sql=="COMMIT":
+                self.db.commit()
+            else:
+                res = self.dbc.execute(sql,args)
+                if "SELECT" in sql:
+                    result=res.fetchall()
+                    if len(result)==1:
+                        return result[0]
+                    elif len(result)==0:
+                        return None
+                    else:
+                        return result
+                elif "INSERT INTO" in sql:
+                    self.db.commit()
+        finally:
+            self.lock.release()
 
     def inputs(self):
         while self.running:
             x=input("Server>")
             if "/help" in x:
-                print("/help\n\tShows this help menu\n\
-/kick <player>\n\tkicks a player of a given username\n\
-/say <text>\n\tsends a chat message to everyone\n\
-/ban <player>\n\tbans a player of a given username")
+                print(self.input_help)
             if "/kick " in x:
                 name=x.replace("/kick ","")
                 player=self.playerFind(name)
