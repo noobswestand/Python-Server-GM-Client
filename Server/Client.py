@@ -217,9 +217,9 @@ class Client(threading.Thread):
 		
 		#save into db
 		if self.user!=None:
-			self.server.dbc.execute("UPDATE users SET x=?, y=? WHERE id=?",
+			self.server.sql("UPDATE users SET x=?, y=? WHERE id=?",
 				(self.user.x,self.user.y,self.id))
-			self.server.db.commit()
+			self.server.sql("COMMIT")
 
 		self.connected = False
 

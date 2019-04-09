@@ -8,3 +8,6 @@ A better approach to a python server with a game maker studio client
 
 ## Run
 - Run the RUN.bat to launch the server
+
+## Credits
+- https://github.com/GoodPie/Game-Maker-Server
