@@ -64,9 +64,10 @@ alarm[0] = room_speed;
 #region Logic
 
 state=STATE_MENU;
-packet_reading=false;
-packet_length=0;
-packet_length_real=0;
+msg_offset=0
+msg_size=0
+
+
 
 global.clients=ds_list_create();
 

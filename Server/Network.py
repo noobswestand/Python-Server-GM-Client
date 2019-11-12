@@ -9,6 +9,8 @@ class Buff():
 	def clearbuffer(self):
 		self.BufferWrite.clear()
 		self.BufferWriteT.clear()
+		self.writeushort(0)#For the header - length of data in the packet
+		
 	def writebit(self,b):
 		self.BufferWrite.append(b)
 		self.BufferWriteT.append("?")

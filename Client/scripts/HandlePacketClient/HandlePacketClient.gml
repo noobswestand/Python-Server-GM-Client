@@ -6,6 +6,10 @@ buffer = argument[0];
 var size=argument[1];
 
 while( buffer_tell(buffer) < size ){
+
+msg_size=readushort()//Read the header
+
+
 var msg_id = readbyte();
 switch( msg_id ) {
     case RECIEVE_NETWORK_PING://Ping
@@ -52,4 +56,9 @@ switch( msg_id ) {
 	
 }
 
+//Jump forward the packet size
+msg_offset+=msg_size
+buffer_seek(buffer,buffer_seek_start,msg_offset)
 }
+
+msg_offset=0

@@ -25,7 +25,9 @@ class Client(threading.Thread):
 		if buff==None:
 			buff=self.buffer
 		types = ''.join(buff.BufferWriteT)
-		length=struct.calcsize(types)
+		length=struct.calcsize("="+types)
+		buff.BufferWrite[0]=length#set the header length
+
 		self.connection.send(struct.pack("="+types,*buff.BufferWrite))
 		if debug==True:
 			print(*buff.BufferWrite,''.join(buff.BufferWriteT),struct.pack("="+types,*buff.BufferWrite))
@@ -196,8 +198,10 @@ class Client(threading.Thread):
 
 			if self.handshake == handshake_codes['UNKNOWN']:
 				# First send message to client letting them know we are engaging in a handshake
-				handshake = struct.pack('B', receive_codes['HANDSHAKE'])
-				self.connection.send(handshake)
+				self.clearbuffer()
+				self.writebyte(receive_codes['HANDSHAKE'])
+				self.sendmessage()
+				
 				self.handshake = handshake_codes['WAITING_ACK']
 
 			else:
