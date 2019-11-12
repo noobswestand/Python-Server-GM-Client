@@ -52,7 +52,7 @@ result = -1;
 var size, type, alignment;
 
 size = 1024;
-type = buffer_fixed;
+type = buffer_grow;
 alignment = 1;
 global.Buffer = buffer_create( size, type, alignment );
 buffer = buffer_create( size, type, alignment );

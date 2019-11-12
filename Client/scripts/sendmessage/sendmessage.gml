@@ -1,15 +1,22 @@
 ///@description sendmessage([tcp])
 ///@param [tcp]
-var __a;
+var tell=buffer_tell(global.Buffer);
 
-if argument_count==1{ 
-	__a=network_send_raw( argument[0] , global.Buffer , buffer_tell( global.Buffer ) );
-}else{
-	__a=network_send_raw( global.clienttcp , global.Buffer , buffer_tell( global.Buffer ) );
+
+//Write the length header
+buffer_seek(global.Buffer,buffer_seek_start,0);
+writeushort(tell)
+
+//Send the message
+var sent,tcp = argument_count==1 ? argument[0] : global.clienttcp;
+sent=network_send_raw( tcp , global.Buffer , tell );
+
+//If we failed to send the message, debug output
+if sent<0{
+    buffer_seek(global.Buffer,buffer_seek_start,2);
+    var msg_id=buffer_read(global.Buffer,buffer_u8);
+    show_debug_message("Sent Message of id "+string(msg_id)+" failed");
 }
-if __a<0{
-    buffer_seek(global.Buffer,0,0)
-    _case=buffer_read(global.Buffer,buffer_u8)
-    show_debug_message("Sent Message of id "+string(_case)+" failed")
-}
-return __a;
+
+
+return sent;

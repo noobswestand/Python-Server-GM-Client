@@ -50,24 +50,49 @@ class Client(threading.Thread):
 				# Receive data from clients
 				self.buffer.Buffer = self.connection.recv(1024)
 				self.buffer.BufferO=self.buffer.Buffer
-				event_id=self.readbyte()
 
-				if event_id == receive_codes['PING']:
-					self.case_message_ping()
-				elif event_id == receive_codes['DISCONNECT']:
-					self.case_message_player_leave()
-				elif event_id == receive_codes["REGISTER"]:
-					self.case_message_player_register()
-				elif event_id == receive_codes["LOGIN"]:
-					self.case_messasge_player_login()
-				elif event_id == receive_codes["MOVE"]:
-					self.case_message_player_move()
-				elif event_id == receive_codes["CHAT"]:
-					self.case_message_player_chat()
+				while(len(self.buffer.Buffer))>0:
+					packet_size=len(self.buffer.Buffer)
+
+					msg_size=self.readushort()#read the header
+
+					#If we have not gotten enough data, keep receiving until we have
+					while(len(self.buffer.Buffer)+2<msg_size):
+						self.buffer.Buffer+=self.connection.recv(1024)
+						packet_size=len(self.buffer.Buffer)+2
+					self.handlepacket()
+
+
+					#pop the remaining data in the packet
+					while((packet_size-len(self.buffer.Buffer))<msg_size):
+						self.readbyte()
+
+
+
+
+
+
+				
 
 			except ConnectionResetError:
 				self.disconnect_user()
 
+
+	def handlepacket(self):
+		event_id=self.readbyte()
+
+		if event_id == receive_codes['PING']:
+			self.case_message_ping()
+		elif event_id == receive_codes['DISCONNECT']:
+			self.case_message_player_leave()
+		elif event_id == receive_codes["REGISTER"]:
+			self.case_message_player_register()
+		elif event_id == receive_codes["LOGIN"]:
+			self.case_messasge_player_login()
+		elif event_id == receive_codes["MOVE"]:
+			self.case_message_player_move()
+		elif event_id == receive_codes["CHAT"]:
+			self.case_message_player_chat()
 
 
 	def case_message_player_chat(self):
@@ -206,8 +231,10 @@ class Client(threading.Thread):
 
 			else:
 				# Wait for handshake ack
-				data = self.connection.recv(1024)
-				event_id = struct.unpack('B', data[:1])[0]
+				self.buffer.Buffer = self.connection.recv(1024)
+				self.readushort()#packet header
+				event_id=self.readbyte()
+				#event_id = struct.unpack('B', data[:2])[0]
 
 				if event_id == receive_codes['HANDSHAKE']:
 					# Received handshake successfully from client
