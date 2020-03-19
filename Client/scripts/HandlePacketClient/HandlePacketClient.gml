@@ -1,13 +1,28 @@
 ///@description HandlePacketClient(buffer,size)
 ///@param buffer
 ///@param size
-
-buffer = argument[0];
 var size=argument[1];
+
+
+if buffer_reading==true{
+	//if we are in the middle of reading a very large packet
+	buffer_copy(argument[0],0,argument[1],buffer,buffer_tell(buffer))
+}else{
+	buffer_copy(argument[0],0,argument[1],buffer,0)
+	buffer_seek(buffer,buffer_seek_start,0)
+}
+
 
 while( buffer_tell(buffer) < size ){
 
-msg_size=readushort()//Read the header
+if buffer_reading==false{
+	msg_size=readushort()//Read the header
+	buffer_reading=true
+}
+
+if msg_size>size{
+	break//wait for the rest of the packet
+}
 
 
 var msg_id = readbyte();
@@ -59,6 +74,8 @@ switch( msg_id ) {
 //Jump forward the packet size
 msg_offset+=msg_size
 buffer_seek(buffer,buffer_seek_start,msg_offset)
+buffer_reading=false
+
 }
 
 msg_offset=0
