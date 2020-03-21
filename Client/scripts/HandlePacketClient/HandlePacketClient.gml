@@ -6,10 +6,12 @@ var size=argument[1];
 
 if buffer_reading==true{
 	//if we are in the middle of reading a very large packet
-	buffer_copy(argument[0],0,argument[1],buffer,buffer_tell(buffer))
+	buffer_copy(argument[0],0,argument[1],buffer,buffer_size)
+	buffer_size+=size;
 }else{
 	buffer_copy(argument[0],0,argument[1],buffer,0)
 	buffer_seek(buffer,buffer_seek_start,0)
+	buffer_size=size;
 }
 
 
@@ -20,7 +22,7 @@ if buffer_reading==false{
 	buffer_reading=true
 }
 
-if msg_size>size{
+if msg_size>buffer_size{
 	break//wait for the rest of the packet
 }
 

@@ -1,14 +1,12 @@
 import struct,threading,socket,bcrypt,time
-
-from NetworkConstants import receive_codes, send_codes, handshake_codes
-from Network import *
-import Network
-import User
+from NetworkConstants import *
+import Network,User
 
 
-class Client(threading.Thread):
+class Client(threading.Thread,Network.Buff):
 	def __init__(self, connection, address, server,pid):
 		threading.Thread.__init__(self)
+		Network.Buff.__init__(self)
 
 		self.connection = connection                        # Connection Information
 		self.address = address                              # Client Address Properties
@@ -19,7 +17,7 @@ class Client(threading.Thread):
 		self.pid = pid
 		self.id = -1
 		self.username=""
-		self.buffer=Network.Buff()
+		self.buffer=self
 
 	def sendmessage(self,buff=None,debug=False):
 		if buff==None:
@@ -28,7 +26,13 @@ class Client(threading.Thread):
 		length=struct.calcsize("="+types)
 		buff.BufferWrite[0]=length#set the header length
 
-		self.connection.send(struct.pack("="+types,*buff.BufferWrite))
+		#check to see if the length of the buffer is too long
+		maxlength=2**(struct.calcsize(buff.BufferWriteT[0])*8)-1
+		if length>maxlength:
+			print(f"ERROR: Tried to send a message > {maxlength} bits")
+		else:
+			self.connection.send(struct.pack("="+types,*buff.BufferWrite))
+
 		if debug==True:
 			print(*buff.BufferWrite,''.join(buff.BufferWriteT),struct.pack("="+types,*buff.BufferWrite))
 	def sendmessage_other(self):
@@ -270,39 +274,3 @@ class Client(threading.Thread):
 		self.writestring("You have been kicked")
 		self.sendmessage()
 		self.disconnect_user()
-
-
-	def clearbuffer(self):
-		self.buffer.clearbuffer()
-	def writebit(self,b):
-		self.buffer.writebit(b)
-	def writebyte(self,b):
-		self.buffer.writebyte(b)
-	def writestring(self,b):
-		self.buffer.writestring(b)
-	def writeint(self,b):
-		self.buffer.writeint(b)
-	def writedouble(self,b):
-		self.buffer.writedouble(b)
-	def writefloat(self,b):
-		self.buffer.writefloat(b)
-	def writeshort(self,b):
-		self.buffer.writeshort(b)
-	def writeushort(self,b):
-		self.buffer.writeushort(b)
-	def readstring(self):
-		return self.buffer.readstring()
-	def readbyte(self):
-		return self.buffer.readbyte()
-	def readbit(self):
-		return self.buffer.readbit()
-	def readint(self):
-		return self.buffer.readint()
-	def readdouble(self):
-		return self.buffer.readdouble()
-	def readfloat(self):
-		return self.buffer.readfloat()
-	def readshort(self):
-		return self.buffer.readshort()
-	def readushort(self):
-		return self.buffer.readushort()

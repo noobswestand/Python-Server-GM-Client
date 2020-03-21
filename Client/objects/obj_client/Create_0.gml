@@ -57,6 +57,7 @@ alignment = 1;
 global.Buffer = buffer_create( size, type, alignment );
 buffer = buffer_create( size, type, alignment );
 buffer_reading=false
+buffer_size=0
 
 alarm[0] = room_speed;
 
