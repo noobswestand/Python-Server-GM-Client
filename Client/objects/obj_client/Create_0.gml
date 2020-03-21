@@ -55,9 +55,10 @@ size = 1024;
 type = buffer_grow;
 alignment = 1;
 global.Buffer = buffer_create( size, type, alignment );
+global.Buffer_header=buffer_u16;
 buffer = buffer_create( size, type, alignment );
-buffer_reading=false
-buffer_size=0
+buffer_reading=false;
+buffer_size=0;
 
 alarm[0] = room_speed;
 

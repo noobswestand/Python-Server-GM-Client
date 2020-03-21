@@ -1,15 +1,22 @@
 import struct
 
+#https://docs.python.org/2/library/struct.html#format-characters
+
 class Buff():
 	def __init__(self):
 		self.Buffer=-1
 		self.BufferO=-1
 		self.BufferWrite=[]
 		self.BufferWriteT=[]
+		self.BufferHeader="H"
+		self.BufferHeaderSize=struct.calcsize(self.BufferHeader)
 	def clearbuffer(self):
 		self.BufferWrite.clear()
 		self.BufferWriteT.clear()
-		self.writeushort(0)#For the header - length of data in the packet
+
+		#Header- length of data in the packet
+		self.BufferWrite.append(0)
+		self.BufferWriteT.append(self.BufferHeader)
 		
 	def writebit(self,b):
 		self.BufferWrite.append(b)
@@ -71,3 +78,7 @@ class Buff():
 		Buffer2=self.Buffer
 		self.Buffer=self.Buffer[4:]
 		return struct.unpack('f', Buffer2[:4])[0]
+	def readheader(self):
+		Buffer2=self.Buffer
+		self.Buffer=self.Buffer[self.BufferHeaderSize:]
+		return struct.unpack(self.BufferHeader, Buffer2[:self.BufferHeaderSize])[0]

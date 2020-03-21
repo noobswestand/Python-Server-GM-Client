@@ -5,7 +5,8 @@ var tell=buffer_tell(global.Buffer);
 
 //Write the length header
 buffer_seek(global.Buffer,buffer_seek_start,0);
-writeushort(tell)
+
+buffer_write(global.Buffer,global.Buffer_header,tell);//Header
 
 //Send the message
 var sent,tcp = argument_count==1 ? argument[0] : global.clienttcp;

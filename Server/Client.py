@@ -27,9 +27,9 @@ class Client(threading.Thread,Network.Buff):
 		buff.BufferWrite[0]=length#set the header length
 
 		#check to see if the length of the buffer is too long
-		maxlength=2**(struct.calcsize(buff.BufferWriteT[0])*8)-1
+		maxlength=2**(buff.BufferHeaderSize*8)-1
 		if length>maxlength:
-			print(f"ERROR: Tried to send a message > {maxlength} bits")
+			print(f"ERROR: Tried to send a message > {maxlength} bytes")
 		else:
 			self.connection.send(struct.pack("="+types,*buff.BufferWrite))
 
@@ -58,12 +58,12 @@ class Client(threading.Thread,Network.Buff):
 				while(len(self.buffer.Buffer))>0:
 					packet_size=len(self.buffer.Buffer)
 
-					msg_size=self.readushort()#read the header
+					msg_size=self.readheader()#read the header
 
 					#If we have not gotten enough data, keep receiving until we have
-					while(len(self.buffer.Buffer)+2<msg_size):
+					while(len(self.buffer.Buffer)+self.BufferHeaderSize<msg_size):
 						self.buffer.Buffer+=self.connection.recv(1024)
-						packet_size=len(self.buffer.Buffer)+2
+						packet_size=len(self.buffer.Buffer)+self.BufferHeaderSize
 					self.handlepacket()
 
 
@@ -236,7 +236,7 @@ class Client(threading.Thread,Network.Buff):
 			else:
 				# Wait for handshake ack
 				self.buffer.Buffer = self.connection.recv(1024)
-				self.readushort()#packet header
+				self.readheader()#packet header
 				event_id=self.readbyte()
 				#event_id = struct.unpack('B', data[:2])[0]
 

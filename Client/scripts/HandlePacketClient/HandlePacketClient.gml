@@ -18,7 +18,7 @@ if buffer_reading==true{
 while( buffer_tell(buffer) < size ){
 
 if buffer_reading==false{
-	msg_size=readushort()//Read the header
+	msg_size=buffer_read(buffer,global.Buffer_header)//Read the header
 	buffer_reading=true
 }
 
