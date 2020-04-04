@@ -25,7 +25,7 @@ class Buff():
 		self.BufferWrite.append(b)
 		self.BufferWriteT.append("B")
 	def writestring(self,s):
-		self.BufferWriteT.append("{}s".format(len(s)+1))
+		self.BufferWriteT.append("{}s".format(len(s.encode("utf-8"))+1))
 		self.BufferWrite.append(s.encode("utf-8")+b'\x00')
 	def writeint(self,b):
 		self.BufferWrite.append(b)
@@ -43,13 +43,13 @@ class Buff():
 		self.BufferWrite.append(b)
 		self.BufferWriteT.append("H")
 	def readstring(self):
-		s=""
-		p=""
-		while(p!="\x00"):
-			p=struct.unpack('s', self.Buffer[:1])[0].decode("utf-8")
+		plast=b''
+		p=b''
+		while plast!=b'\x00':
+			plast=struct.unpack('s', self.Buffer[:1])[0]
+			p+=plast
 			self.Buffer=self.Buffer[1:]
-			s+=p
-		return s[:-1]
+		return p[:-1].decode('utf-8')
 	def readbyte(self):
 		Buffer2=self.Buffer
 		self.Buffer=self.Buffer[1:]
