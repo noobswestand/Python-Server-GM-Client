@@ -43,11 +43,9 @@ class Buff():
 		self.BufferWrite.append(b)
 		self.BufferWriteT.append("H")
 	def readstring(self):
-		plast=b''
 		p=b''
-		while plast!=b'\x00':
-			plast=struct.unpack('s', self.Buffer[:1])[0]
-			p+=plast
+		while p[-1:]!=b'\x00':
+			p+=struct.unpack('s', self.Buffer[:1])[0]
 			self.Buffer=self.Buffer[1:]
 		return p[:-1].decode('utf-8')
 	def readbyte(self):
